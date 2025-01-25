@@ -1,4 +1,4 @@
-# Application dClassificatione Classification avec Streamlit
+# Application de Classificatione Classification avec Streamlit
 
 ## Description
 Cette application web utilise **Streamlit** pour effectuer des tâches de classification avec différents modèles de machine learning. Elle permet de charger des données, de les prétraiter et d'appliquer plusieurs algorithmes de classification pour obtenir des résultats et des visualisations interactives.
