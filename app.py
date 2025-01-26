@@ -8,6 +8,8 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, roc_curve, precision_recall_curve
 from sklearn.metrics import precision_score, recall_score
+from sklearn.metrics import ConfusionMatrixDisplay, RocCurveDisplay, PrecisionRecallDisplay
+
 
 st.title("Application Web de Classification Binaire")
 st.sidebar.title("Application Web de Classification Binaire")
@@ -34,23 +36,31 @@ df = load_data()
 x_train, x_test, y_train, y_test = split(df)
 
 
-def plot_metrics(metrics_list):
-    if "Matrice de Confusion" in metrics_list:
-        st.subheader("Matrice de Confusion")
-        cm = confusion_matrix(y_test, y_pred)
-        st.write(cm)
 
-    if "Courbe ROC" in metrics_list:
-        st.subheader("Courbe ROC")
-        fpr, tpr, thresholds = roc_curve(y_test, y_pred)
-        st.write(fpr, tpr)
 
-    if "Courbe PR" in metrics_list:
-        st.subheader("Courbe PR")
-        precision, recall, thresholds = precision_recall_curve(y_test, y_pred)
-        st.write(precision, recall)
+def metrics(metrics_list, model, x_test, y_test, class_names):
+    if 'Confusion Matrix' in metrics_list:
+        st.subheader("Confusion Matrix")
+        disp = ConfusionMatrixDisplay.from_estimator(
+            estimator=model,
+            X=x_test,
+            y=y_test,
+            display_labels=class_names
+        )
+        st.pyplot(disp.figure_)  
 
-        
+    if 'ROC Curve' in metrics_list:
+        st.subheader("ROC Curve")
+        roc_disp = RocCurveDisplay.from_estimator(model, x_test, y_test)
+        st.pyplot(roc_disp.figure_)  
+
+    if 'Precision-Recall Curve' in metrics_list:
+        st.subheader("Precision-Recall Curve")
+        pr_disp = PrecisionRecallDisplay.from_estimator(model, x_test, y_test)
+        st.pyplot(pr_disp.figure_)  
+
+
+
 
 
 
