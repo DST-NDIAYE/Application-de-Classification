@@ -14,6 +14,12 @@ st.sidebar.title("Application Web de Classification Binaire")
 st.markdown("Vos champignons sont-ils comestibles ou toxiques ? 🍄")
 st.sidebar.markdown("Vos champignons sont-ils comestibles ou toxiques ? 🍄")
 
+@st.cache(persist=True) #pour ne pas recharger les données à chaque fois
 def load_data():
     data = pd.read_csv("data/mushrooms.csv")
+    label = LabelEncoder()
+    for col in data.columns:
+        data[col] = label.fit_transform(data[col])
     return data
+
+df = load_data()
