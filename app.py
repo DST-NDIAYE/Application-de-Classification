@@ -31,6 +31,46 @@ def split(df):
     return x_train, x_test, y_train, y_test
 
 df = load_data()
+x_train, x_test, y_train, y_test = split(df)
+
+
+def plot_metrics(metrics_list):
+    if "Matrice de Confusion" in metrics_list:
+        st.subheader("Matrice de Confusion")
+        cm = confusion_matrix(y_test, y_pred)
+        st.write(cm)
+
+    if "Courbe ROC" in metrics_list:
+        st.subheader("Courbe ROC")
+        fpr, tpr, thresholds = roc_curve(y_test, y_pred)
+        st.write(fpr, tpr)
+
+    if "Courbe PR" in metrics_list:
+        st.subheader("Courbe PR")
+        precision, recall, thresholds = precision_recall_curve(y_test, y_pred)
+        st.write(precision, recall)
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 if st.sidebar.checkbox("Afficher le Dataset", help="Cliquez ici pour afficher le dataset"):
     st.subheader("Dataset")
