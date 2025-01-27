@@ -106,3 +106,21 @@ if classifier == "SVM":
         st.write("Recall: ", recall_score(y_test, y_pred).round(2))
         plot_metrics(metrics)
         
+if classifier == "Logistic Regression":
+    st.sidebar.subheader("Paramètres du modèle")
+    C = st.sidebar.number_input("C (Regularization parameter)", 0.01, 10.0, step=0.01, key="C_LR")
+    max_iter = st.sidebar.slider("Maximum number of iterations", 100, 500, key="max_iter")
+    metrics = st.sidebar.multiselect("Choisir les métriques à afficher", ("Confusion Matrix", "ROC Curve", "Precision-Recall Curve"))
+
+    if st.sidebar.button("Classer", key="classify"):
+        st.subheader("Logistic Regression Results")
+        model = LogisticRegression(C=C, max_iter=max_iter)
+        model.fit(x_train, y_train)
+        accuracy = model.score(x_test, y_test)
+        y_pred = model.predict(x_test)
+        st.write("Accuracy: ", round(accuracy, 2))
+        st.write("Precision: ", precision_score(y_test, y_pred).round(2))
+        st.write("Recall: ", recall_score(y_test, y_pred).round(2))
+        plot_metrics(metrics)
+
+
