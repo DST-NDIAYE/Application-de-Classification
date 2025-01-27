@@ -85,3 +85,26 @@ def metrics(metrics_list, model, x_test, y_test, class_names):
 if st.sidebar.checkbox("Afficher le Dataset", help="Cliquez ici pour afficher le dataset"):
     st.subheader("Dataset")
     st.write(df)
+
+st.sidebar.subheader("Choisir un Classifieur")
+
+classifier  = st.sidebar._selectbox("Classifieur", ("SVM", "Logistic Regression", "Random Forest"))
+
+if classifier == "SVM":
+    st.sidebar.subheader("Paramètres du modèle SVM")
+    C = st.sidebar.number_input("C (Regularization parameter)", 0.01, 10.0, step=0.01, key="C")
+    kernel = st.sidebar._selectbox("Kernel", ("rbf", "linear"), key="kernel")
+    gamma = st.sidebar._selectbox("Gamma (Kernel coefficient)", ("scale", "auto"), key="gamma")
+
+    metrics_list = st.sidebar.multiselect("Choisir les métriques à afficher", ("Confusion Matrix", "ROC Curve", "Precision-Recall Curve"))
+
+    if st.sidebar.button("Classer", help="Cliquez ici pour classer"):
+        st.subheader("Résultats du modèle SVM")
+        model = SVC(C=C, kernel=kernel, gamma=gamma)
+        model.fit(x_train, y_train)
+        accuracy = model.score(x_test, y_test)
+        y_pred = model.predict(x_test)
+        st.write("Accuracy: ", accuracy.round(2))
+        st.write("Precision: ", precision_score(y_test, y_pred).round(2))
+        st.write("Recall: ", recall_score(y_test, y_pred).round(2))
+        metrics(metrics_list, model, x_test, y_test, ["edible", "poisonous"])
