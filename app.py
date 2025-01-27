@@ -38,7 +38,7 @@ x_train, x_test, y_train, y_test = split(df)
 
 
 
-def metrics(metrics_list, model, x_test, y_test, class_names):
+def plot_metrics(metrics_list, model, x_test, y_test, class_names):
     if 'Confusion Matrix' in metrics_list:
         st.subheader("Confusion Matrix")
         disp = ConfusionMatrixDisplay.from_estimator(
@@ -95,11 +95,10 @@ if classifier == "SVM":
     C = st.sidebar.number_input("C (Regularization parameter)", 0.01, 10.0, step=0.01, key="C")
     kernel = st.sidebar._selectbox("Kernel", ("rbf", "linear"), key="kernel")
     gamma = st.sidebar._selectbox("Gamma (Kernel coefficient)", ("scale", "auto"), key="gamma")
+    metrics = st.sidebar.multiselect("Choisir les métriques à afficher", ("Confusion Matrix", "ROC Curve", "Precision-Recall Curve"))
 
-    metrics_list = st.sidebar.multiselect("Choisir les métriques à afficher", ("Confusion Matrix", "ROC Curve", "Precision-Recall Curve"))
-
-    if st.sidebar.button("Classer", help="Cliquez ici pour classer"):
-        st.subheader("Résultats du modèle SVM")
+    if st.sidebar.button("Classer", key="classify"):
+        st.subheader("Support Vector Machine (SVM) Results")
         model = SVC(C=C, kernel=kernel, gamma=gamma)
         model.fit(x_train, y_train)
         accuracy = model.score(x_test, y_test)
@@ -107,4 +106,5 @@ if classifier == "SVM":
         st.write("Accuracy: ", accuracy.round(2))
         st.write("Precision: ", precision_score(y_test, y_pred).round(2))
         st.write("Recall: ", recall_score(y_test, y_pred).round(2))
-        metrics(metrics_list, model, x_test, y_test, ["edible", "poisonous"])
+        metrics(metrics, model, x_test, y_test, ["edible", "poisonous"])
+        
