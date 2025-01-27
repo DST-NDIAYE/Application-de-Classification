@@ -124,3 +124,20 @@ if classifier == "Logistic Regression":
         plot_metrics(metrics)
 
 
+if classifier == "Random Forest":
+    st.sidebar.subheader("Paramètres du modèle")
+    n_estimators = st.sidebar.number_input("Number of trees in the forest", 100, 5000, step=10, key="n_estimators")
+    max_depth = st.sidebar.number_input("Maximum depth of the tree", 1, 20, step=1, key="max_depth")
+    bootstrap = st.sidebar.radio("Bootstrap samples when building trees", ("True", "False"), key="bootstrap")
+    metrics = st.sidebar.multiselect("Choisir les métriques à afficher", ("Confusion Matrix", "ROC Curve", "Precision-Recall Curve"))
+
+    if st.sidebar.button("Classer", key="classify"):
+        st.subheader("Random Forest Results")
+        model = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth, bootstrap=bootstrap)
+        model.fit(x_train, y_train)
+        accuracy = model.score(x_test, y_test)
+        y_pred = model.predict(x_test)
+        st.write("Accuracy: ", round(accuracy, 2))
+        st.write("Precision: ", precision_score(y_test, y_pred).round(2))
+        st.write("Recall: ", recall_score(y_test, y_pred).round(2))
+        plot_metrics(metrics)
