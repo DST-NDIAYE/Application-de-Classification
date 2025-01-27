@@ -25,29 +25,27 @@ def load_data():
     return data
 
 
-@st.cache_data(persist=True)
+
 def split(df):
     y = df["class"]
     x = df.drop(columns=["class"])
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
+    
     return x_train, x_test, y_train, y_test
 
 df = load_data()
 x_train, x_test, y_train, y_test = split(df)
+class_names = ["edible", "poisonous"]
 
 
 
 
-def plot_metrics(metrics_list, model, x_test, y_test, class_names):
+def plot_metrics(metrics_list):
     if 'Confusion Matrix' in metrics_list:
         st.subheader("Confusion Matrix")
-        disp = ConfusionMatrixDisplay.from_estimator(
-            estimator=model,
-            X=x_test,
-            y=y_test,
-            display_labels=class_names
-        )
-        st.pyplot(disp.figure_)  
+        disp = ConfusionMatrixDisplay.from_estimator(model, x_test, y_test, display_labels=class_names)
+        st.pyplot(disp.figure_)
+
 
     if 'ROC Curve' in metrics_list:
         st.subheader("ROC Curve")
@@ -88,13 +86,13 @@ if st.sidebar.checkbox("Afficher le Dataset", help="Cliquez ici pour afficher le
 
 st.sidebar.subheader("Choisir un Classifieur")
 
-classifier  = st.sidebar._selectbox("Classifieur", ("SVM", "Logistic Regression", "Random Forest"))
+classifier  = st.sidebar.selectbox("Classifieur", ("SVM", "Logistic Regression", "Random Forest"))
 
 if classifier == "SVM":
-    st.sidebar.subheader("Paramètres du modèle SVM")
+    st.sidebar.subheader("Paramètres du modèle")
     C = st.sidebar.number_input("C (Regularization parameter)", 0.01, 10.0, step=0.01, key="C")
-    kernel = st.sidebar._selectbox("Kernel", ("rbf", "linear"), key="kernel")
-    gamma = st.sidebar._selectbox("Gamma (Kernel coefficient)", ("scale", "auto"), key="gamma")
+    kernel = st.sidebar.radio("Kernel", ("rbf", "linear"), key="kernel")
+    gamma = st.sidebar.radio("Gamma (Kernel Coefficient)", ("scale", "auto"), key="gamma")
     metrics = st.sidebar.multiselect("Choisir les métriques à afficher", ("Confusion Matrix", "ROC Curve", "Precision-Recall Curve"))
 
     if st.sidebar.button("Classer", key="classify"):
@@ -103,8 +101,8 @@ if classifier == "SVM":
         model.fit(x_train, y_train)
         accuracy = model.score(x_test, y_test)
         y_pred = model.predict(x_test)
-        st.write("Accuracy: ", accuracy.round(2))
+        st.write("Accuracy: ", round(accuracy, 2))
         st.write("Precision: ", precision_score(y_test, y_pred).round(2))
         st.write("Recall: ", recall_score(y_test, y_pred).round(2))
-        metrics(metrics, model, x_test, y_test, ["edible", "poisonous"])
+        plot_metrics(metrics)
         
